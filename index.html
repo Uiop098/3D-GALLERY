@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UIO0987 · 3D Gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ░░ RGB BORDER (default OFF via JS) ░░ -->
+  <canvas id="rgbCanvas"></canvas>
+
+  <!-- ░░ STARFIELD ░░ -->
+  <div id="stars"></div>
+
+  <!-- ░░ WALLPAPER BG ░░ -->
+  <div id="wallpaperBg"></div>
+
+  <!-- ░░ AMBIENT GLOW ░░ -->
+  <div id="ambientOverlay"></div>
+
+  <!-- ░░ SCENE ░░ -->
+  <div id="sceneWrapper">
+    <div id="scene"></div>
+  </div>
+
+  <!-- ░░ EMPTY STATE ░░ -->
+  <div id="emptyState">
+    <div class="empty-icon">✦</div>
+    <h2>YOUR GALLERY AWAITS</h2>
+    <p>Click <strong>＋</strong> to add your first images</p>
+  </div>
+
+  <!-- ░░ CREATOR BADGE ░░ -->
+  <div id="creatorBadge"><span class="badge-dot"></span>by <em>uio0987</em></div>
+
+  <!-- ░░ HAMBURGER BUTTON ░░ -->
+  <button id="hamBtn" aria-label="Open settings">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- ░░ FAB ADD IMAGE ░░ -->
+  <button id="fabBtn" title="Add Images">＋</button>
+
+  <!-- ░░ PAUSE BTN ░░ -->
+  <button id="pauseBtn" title="Pause / Resume">⏸</button>
+
+  <!-- ░░ TOAST ░░ -->
+  <div id="toast"></div>
+
+  <!-- ══════════════════════════════════════════════════════
+       HAM PANEL
+  ══════════════════════════════════════════════════════ -->
+  <aside id="hamPanel" aria-hidden="true">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">CONTROL PANEL</div>
+        <div class="panel-sub">3D Gallery · by <strong>uio0987</strong></div>
+      </div>
+      <button id="panelClose" aria-label="Close">✕</button>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- THEME -->
+      <section class="p-section">
+        <div class="p-section-title">THEME</div>
+        <div class="theme-grid">
+          <button class="theme-chip active" data-theme="dark">🌑 Dark</button>
+          <button class="theme-chip" data-theme="light">☀️ Light</button>
+          <button class="theme-chip" data-theme="cyber">💚 Cyber</button>
+          <button class="theme-chip" data-theme="rose">🌸 Rose</button>
+          <button class="theme-chip" data-theme="ocean">🌊 Ocean</button>
+          <button class="theme-chip" data-theme="fire">🔥 Fire</button>
+        </div>
+      </section>
+
+      <!-- EFFECTS -->
+      <section class="p-section">
+        <div class="p-section-title">EFFECTS</div>
+        <div class="toggle-row">
+          <span>🌈 RGB Border</span>
+          <label class="sw"><input type="checkbox" id="rgbToggle" /><span class="sw-track"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>🌌 Ambient Glow</span>
+          <label class="sw"><input type="checkbox" id="ambientToggle" /><span class="sw-track"></span></label>
+        </div>
+        <div class="toggle-row">
+          <span>⭐ Starfield</span>
+          <label class="sw"><input type="checkbox" id="starsToggle" checked /><span class="sw-track"></span></label>
+        </div>
+      </section>
+
+      <!-- GALLERY CONTROLS -->
+      <section class="p-section">
+        <div class="p-section-title">GALLERY</div>
+        <div class="slider-row">
+          <span>Rotation Speed</span><span id="speedVal" class="val-badge">25s</span>
+        </div>
+        <input type="range" class="p-slider" id="speedSlider" min="5" max="80" value="25" />
+        <div class="slider-row" style="margin-top:14px">
+          <span>Orbit Radius</span><span id="radiusVal" class="val-badge">380px</span>
+        </div>
+        <input type="range" class="p-slider" id="radiusSlider" min="120" max="700" value="380" />
+        <div class="slider-row" style="margin-top:14px">
+          <span>Card Size</span><span id="sizeVal" class="val-badge">220px</span>
+        </div>
+        <input type="range" class="p-slider" id="sizeSlider" min="100" max="360" value="220" />
+        <div class="toggle-row" style="margin-top:14px">
+          <span>Auto-tilt Y</span>
+          <label class="sw"><input type="checkbox" id="tiltToggle" checked /><span class="sw-track"></span></label>
+        </div>
+      </section>
+
+      <!-- WALLPAPER -->
+      <section class="p-section">
+        <div class="p-section-title">WALLPAPER</div>
+        <div class="wp-grid" id="wpGrid">
+          <div class="wp-thumb wp-none active" data-wp="" title="None">✕</div>
+          <div class="wp-thumb" data-wp="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=600" style="background-image:url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=200')"></div>
+          <div class="wp-thumb" data-wp="https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=600" style="background-image:url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=200')"></div>
+          <div class="wp-thumb" data-wp="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200')"></div>
+          <div class="wp-thumb" data-wp="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200')"></div>
+          <div class="wp-thumb" data-wp="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=600" style="background-image:url('https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=200')"></div>
+        </div>
+        <button class="p-btn" onclick="document.getElementById('wpFile').click()">📁 Upload Image</button>
+        <input type="file" id="wpFile" accept="image/*" style="display:none" />
+        <input type="text" class="p-input" id="wpUrl" placeholder="Paste wallpaper URL…" />
+        <button class="p-btn" id="wpUrlBtn">🔗 Apply URL</button>
+        <div class="slider-row" style="margin-top:12px">
+          <span>Opacity</span><span id="wpOpVal" class="val-badge">18%</span>
+        </div>
+        <input type="range" class="p-slider" id="wpOpacity" min="5" max="80" value="18" />
+      </section>
+
+      <!-- MUSIC -->
+      <section class="p-section">
+        <div class="p-section-title">BACKGROUND MUSIC</div>
+        <div class="music-info" id="musicInfo">No track loaded</div>
+        <div class="music-controls">
+          <button class="m-btn" id="musicPlayBtn" onclick="toggleMusic()">▶</button>
+          <button class="m-btn" onclick="stopMusic()">⏹</button>
+          <input type="range" class="p-slider" id="volSlider" min="0" max="100" value="60" style="flex:1" />
+        </div>
+        <button class="p-btn" onclick="document.getElementById('musicFile').click()">🎵 Upload Audio</button>
+        <input type="file" id="musicFile" accept="audio/*" style="display:none" />
+        <input type="text" class="p-input" id="musicUrl" placeholder="Paste audio URL (.mp3 / .ogg)…" />
+        <button class="p-btn" id="musicUrlBtn">🔗 Load URL</button>
+      </section>
+
+      <!-- FEEDBACK -->
+      <section class="p-section">
+        <div class="p-section-title">SEND FEEDBACK</div>
+        <p class="p-hint">Your message goes straight to uio0987's inbox.</p>
+        <input type="text"  class="p-input" id="fbName"  placeholder="Your name *" />
+        <input type="email" class="p-input" id="fbEmail" placeholder="Your email (optional)" />
+        <textarea class="p-input p-textarea" id="fbMsg" placeholder="Your message *"></textarea>
+        <button class="p-btn p-btn-accent" id="fbSendBtn">✉️ SEND FEEDBACK</button>
+        <div id="fbStatus"></div>
+      </section>
+
+    </div><!-- /panel-body -->
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════
+       ADD IMAGE MODAL
+  ══════════════════════════════════════════════════════ -->
+  <div id="modalOverlay">
+    <div id="modal">
+      <div class="modal-header">
+        <span class="modal-title">ADD IMAGES</span>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="tab-row">
+        <button class="tab active" id="tabLocal">📁 Local Files</button>
+        <button class="tab" id="tabUrl">🔗 From URL</button>
+      </div>
+
+      <!-- Local Pane -->
+      <div id="paneLocal">
+        <div id="dropZone">
+          <input type="file" id="fileInput" accept="image/*" multiple />
+          <div class="drop-icon">📸</div>
+          <div class="drop-text">Drop images here or <strong>click to browse</strong></div>
+          <div class="drop-sub">PNG · JPG · GIF · WEBP</div>
+        </div>
+        <div id="previewStrip"></div>
+      </div>
+
+      <!-- URL Pane -->
+      <div id="paneUrl" style="display:none">
+        <input type="text"  class="p-input" id="imgUrlInput"   placeholder="https://example.com/photo.jpg" />
+        <input type="text"  class="p-input" id="imgLabelInput" placeholder="Label (optional)" />
+        <button class="p-btn p-btn-accent" id="addUrlBtn">➕ Add This Image</button>
+      </div>
+
+      <div class="modal-footer">
+        <button class="p-btn" id="modalCancelBtn">Cancel</button>
+        <button class="p-btn p-btn-accent" id="modalAddBtn">Add to Gallery</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bgAudio" loop></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
